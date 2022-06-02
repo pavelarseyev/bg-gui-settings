@@ -2,6 +2,9 @@
 creates a gui for settings object
 
 
+# WARNING
+THIS README ISN'T READY YET.
+
 ## Usage:
 
 #### 1. Create an object Widget with object field called 'properties'.
