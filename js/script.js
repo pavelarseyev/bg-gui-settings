@@ -32,8 +32,7 @@ new GUISettings(Widget, async () => {
   
   const feed = await Widget.properties.widgetFeed.load();
 
-  console.log('feed.data:', feed.data);
-  console.log('Widget.properties: ', Widget.properties);
+  console.log(Widget)
 }, {
   expanded: true,
   widgetWrapper: document.querySelector('.wrapper')

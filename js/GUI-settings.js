@@ -40,14 +40,13 @@ export default class GUISettings {
     this.createMarkup(Widget);
     this.createStyles();
     this.addListeners(Widget);
-    this.setValues(Widget.properties);
-    this.setWrapperWidth(Widget);
-    
+    this.setValues(Widget);
+    this.setWidgetWidth(Widget);
     callback();
   }
 
   /**
-   * Adds Widget.width, Widget.height, font.createFontFace(text), feed.load()
+   * Adds Widget.width, Widget.height, Widget.isLoadedPromise, font.createFontFace(text), feed.load()
    */
   addHiddenFields(Widget) {
     const defaults = {
@@ -62,6 +61,10 @@ export default class GUISettings {
     Object.defineProperty(Widget, 'height', {
       ...defaults, 
       value: 0
+    });
+    Object.defineProperty(Widget, 'isLoadedPromise', {
+      ...defaults,
+      value: undefined
     });
     
 
@@ -632,7 +635,7 @@ export default class GUISettings {
     this.settingsHolder.prepend(style);
   }
 
-  setWrapperWidth(Widget) {
+  setWidgetWidth(Widget) {
     Widget.width = this.widgetWrapper.offsetWidth;
     Widget.height = this.widgetWrapper.offsetHeight;
   }
@@ -648,13 +651,16 @@ export default class GUISettings {
       this.settingsHolder.classList.toggle("hidden");
     });
 
-    window.addEventListener('resize', this.setWrapperWidth.bind(this));
+    window.addEventListener('resize', () => {
+      this.setWidgetWidth(Widget);
+    });
   }
 
   /**
    * @method Sets raw values to the Widget.properties object, font.id and feed.data
   */
-  setValues(widgetProperties) {
+  setValues(Widget) {
+    // set properties
     const inputs = this.settingsHolder.querySelectorAll('[name]');
     inputs.forEach(input => {
       const name = input.name;
@@ -673,13 +679,13 @@ export default class GUISettings {
 
       // rewrite font field value
       if (input.classList.contains(this.CLASSES.FONT_SELECT_MODIFIER)) {
-        widgetProperties[name].id = value;
+        Widget.properties[name].id = value;
       // rewrite feed field value
       } else if (type === 'radio') {
-        widgetProperties[name].data = value;
+        Widget.properties[name].data = value;
       // rewrite a field with a raw value
       } else {
-        widgetProperties[name] = value;
+        Widget.properties[name] = value;
       }
     });
   }
